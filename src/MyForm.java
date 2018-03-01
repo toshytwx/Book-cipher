@@ -1,10 +1,9 @@
-import encrypt.CaesarEncryptor;
+import encrypt.TritemiusEncryptor;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import java.awt.*;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
-import java.io.*;
 
 public class MyForm extends JDialog {
     private JPanel contentPane;
@@ -15,11 +14,11 @@ public class MyForm extends JDialog {
     private JButton decode;
     private JButton aboutButton;
     private JButton exitButton;
-    private JSpinner keyValue;
-    private JComboBox comboBox;
+    private JComboBox languageSelector;
     private JFormattedTextField linearFunc;
     private JFormattedTextField unlinearFunc;
     private JTextField motto;
+    private JComboBox keyTypeSelector;
     private JFileChooser jFileChooser;
 
     public MyForm(Controller controller) {
@@ -53,15 +52,16 @@ public class MyForm extends JDialog {
 
         code.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                CaesarEncryptor.power = ((String) comboBox.getSelectedItem()).equals("eng") ? 128 : 1103;
-                String codedText = controller.onCode(textArea.getText(),(Integer) keyValue.getValue());
+                TritemiusEncryptor.power = ((String) languageSelector.getSelectedItem()).equals("eng") ? 128 : 1103;
+                Integer key = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
+                String codedText = controller.onCode(textArea.getText(), key);
                 textArea.setText(codedText);
             }
         });
 
         decode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String decodedText = controller.onDecode(textArea.getText(),(Integer) keyValue.getValue());
+                String decodedText = controller.onDecode(textArea.getText(),(Integer) 1);
                 textArea.setText(decodedText);
             }
         });
@@ -86,20 +86,91 @@ public class MyForm extends JDialog {
             }
         });
 
-        keyValueTune();
-        comboBoxTune();
+        keyTypeSelector.addActionListener (new ActionListener () {
+            public void actionPerformed(ActionEvent e) {
+                setKeySelector();
+            }
+        });
+        linearFunc.setEditable(false);
+        unlinearFunc.setEditable(false);
+        motto.setEditable(false);
+        linearFuncTune();
+        unlinearFuncTune();
+        languageSelectorTune();
+        keyTypeSelectorTune();
     }
 
-    private void keyValueTune() {
-        SpinnerModel spinnerModel = new SpinnerNumberModel(0, 0, 255, 1);
-        keyValue.setModel(spinnerModel);
+    private void setKeySelector() {
+        String selectorValue = (String) keyTypeSelector.getSelectedItem();
+        switch (selectorValue)
+        {
+            case "Linear":
+            {
+                linearFunc.setEditable(true);
+                unlinearFunc.setText("");
+                motto.setText("");
+                unlinearFunc.setEditable(false);
+                motto.setEditable(false);
+                break;
+            }
+            case "Unlinear":
+            {
+                unlinearFunc.setEditable(true);
+                linearFunc.setText("");
+                motto.setText("");
+                linearFunc.setEditable(false);
+                motto.setEditable(false);
+                break;
+            }
+            case "Motto":
+            {
+                motto.setEditable(true);
+                linearFunc.setText("");
+                unlinearFunc.setText("");
+                linearFunc.setEditable(false);
+                unlinearFunc.setEditable(false);
+                break;
+            }
+        }
     }
 
-    private void comboBoxTune() {
+    private void keyTypeSelectorTune() {
+        DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
+        defaultComboBoxModel.addElement("Linear");
+        defaultComboBoxModel.addElement("Unlinear");
+        defaultComboBoxModel.addElement("Motto");
+        keyTypeSelector.setModel(defaultComboBoxModel);
+    }
+
+    private void linearFuncTune() {
+        try {
+            MaskFormatter linearFormatter = new MaskFormatter("#p+#");
+            linearFormatter.setPlaceholderCharacter('x');
+            DefaultFormatterFactory defaultFormatterFactory = new DefaultFormatterFactory(linearFormatter);
+            linearFunc.setFormatterFactory(defaultFormatterFactory);
+            linearFunc.setColumns(4);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void unlinearFuncTune() {
+        try {
+            MaskFormatter linearFormatter = new MaskFormatter("#p+#p+#");
+            linearFormatter.setPlaceholderCharacter('x');
+            DefaultFormatterFactory defaultFormatterFactory = new DefaultFormatterFactory(linearFormatter);
+            unlinearFunc.setFormatterFactory(defaultFormatterFactory);
+            unlinearFunc.setColumns(8);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void languageSelectorTune() {
         DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
         defaultComboBoxModel.addElement("eng");
         defaultComboBoxModel.addElement("ukr");
-        comboBox.setModel(defaultComboBoxModel);
+        languageSelector.setModel(defaultComboBoxModel);
     }
 
     private void onAbout() {

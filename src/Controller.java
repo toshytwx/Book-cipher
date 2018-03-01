@@ -1,4 +1,5 @@
 import encrypt.IEncryptor;
+import encrypt.TritemiusEncryptor;
 
 import javax.swing.*;
 import java.io.*;
@@ -45,6 +46,23 @@ public class Controller {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public Integer verifyKeyValue(String input, String linearFunc, String unlinearFunc, String motto)
+    {
+        TritemiusEncryptor tritemiusEncryptor = (TritemiusEncryptor) encryptor;
+        char A = linearFunc.charAt(0);
+        char B = linearFunc.charAt(3);
+        char C = linearFunc.charAt(6);
+        boolean isLinear = (A != 'x') && (B != 'x');
+        boolean isUnlinear = isLinear && (C != 'x');
+        if (isLinear) {
+            return tritemiusEncryptor.getKeyFromLinearFunc(input, A, B);
+        } else if (isUnlinear) {
+            return tritemiusEncryptor.getKeyFromUnlinearFunc(input, A, B, C);
+        } else {
+            return tritemiusEncryptor.getKeyFromMotto(input, motto);
         }
     }
 }
