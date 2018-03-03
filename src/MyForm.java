@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class MyForm extends JDialog {
     private JPanel contentPane;
@@ -52,16 +53,17 @@ public class MyForm extends JDialog {
 
         code.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                TritemiusEncryptor.power = ((String) languageSelector.getSelectedItem()).equals("eng") ? 128 : 1103;
-                Integer key = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
-                String codedText = controller.onCode(textArea.getText(), key);
+                TritemiusEncryptor.power = ((String) languageSelector.getSelectedItem()).equals("eng") ? TritemiusEncryptor.ENG : TritemiusEncryptor.UKR;
+                ArrayList<Integer> keys = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
+                String codedText = controller.onCode(textArea.getText(), keys);
                 textArea.setText(codedText);
             }
         });
 
         decode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String decodedText = controller.onDecode(textArea.getText(),(Integer) 1);
+                ArrayList<Integer> keys = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
+                String decodedText = controller.onDecode(textArea.getText(), keys);
                 textArea.setText(decodedText);
             }
         });

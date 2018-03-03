@@ -3,6 +3,7 @@ import encrypt.TritemiusEncryptor;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class Controller {
     private IEncryptor encryptor;
@@ -11,12 +12,12 @@ public class Controller {
         this.encryptor = encryptor;
     }
 
-    public String onCode(String incomingText, Integer key) {
-        return encryptor.onCode(incomingText, key);
+    public String onCode(String incomingText, ArrayList<Integer> keys) {
+        return encryptor.onCode(incomingText, keys);
     }
 
-    public String onDecode(String incomingText, Integer key) {
-        return encryptor.onDecode(incomingText, key);
+    public String onDecode(String incomingText, ArrayList<Integer> keys) {
+        return encryptor.onDecode(incomingText, keys);
     }
 
     public String onOpenFile(JFileChooser jFileChooser) {
@@ -49,12 +50,12 @@ public class Controller {
         }
     }
 
-    public Integer verifyKeyValue(String input, String linearFunc, String unlinearFunc, String motto)
+    public ArrayList<Integer> verifyKeyValue(String input, String linearFunc, String unlinearFunc, String motto)
     {
         TritemiusEncryptor tritemiusEncryptor = (TritemiusEncryptor) encryptor;
         char A = linearFunc.charAt(0);
         char B = linearFunc.charAt(3);
-        char C = linearFunc.charAt(6);
+        char C = unlinearFunc.charAt(6);
         boolean isLinear = (A != 'x') && (B != 'x');
         boolean isUnlinear = isLinear && (C != 'x');
         if (isLinear) {
