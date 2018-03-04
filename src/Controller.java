@@ -57,7 +57,11 @@ public class Controller {
         char B = linearFunc.charAt(3);
         char C = unlinearFunc.charAt(6);
         boolean isLinear = (A != 'x') && (B != 'x');
-        boolean isUnlinear = isLinear && (C != 'x');
+        if (A == 'x' && B == 'x') {
+            A = unlinearFunc.charAt(0);
+            B = unlinearFunc.charAt(3);
+        }
+        boolean isUnlinear = (A != 'x') && (B != 'x') && (C != 'x');
         if (isLinear) {
             return tritemiusEncryptor.getKeyFromLinearFunc(input, A, B);
         } else if (isUnlinear) {
