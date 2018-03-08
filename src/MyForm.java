@@ -20,6 +20,7 @@ public class MyForm extends JDialog {
     private JFormattedTextField unlinearFunc;
     private JTextField motto;
     private JComboBox keyTypeSelector;
+    private JPanel imagePanel;
     private JFileChooser jFileChooser;
 
     public MyForm(Controller controller) {
