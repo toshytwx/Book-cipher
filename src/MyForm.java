@@ -1,8 +1,7 @@
-import encrypt.TritemiusEncryptor;
+import encrypt.Dictionary;
+import encrypt.GammaEncryptor;
 
 import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.text.MaskFormatter;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -16,11 +15,7 @@ public class MyForm extends JDialog {
     private JButton aboutButton;
     private JButton exitButton;
     private JComboBox languageSelector;
-    private JFormattedTextField linearFunc;
-    private JFormattedTextField unlinearFunc;
     private JTextField motto;
-    private JComboBox keyTypeSelector;
-    private JPanel imagePanel;
     private JFileChooser jFileChooser;
 
     public MyForm(Controller controller) {
@@ -54,8 +49,14 @@ public class MyForm extends JDialog {
 
         code.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                TritemiusEncryptor.power = ((String) languageSelector.getSelectedItem()).equals("eng") ? TritemiusEncryptor.ENG : TritemiusEncryptor.UKR;
-                ArrayList<Integer> keys = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
+                if (((String) languageSelector.getSelectedItem()).equals("eng")) {
+                    GammaEncryptor.power = Dictionary.ENGALPHABET.size();
+                    Dictionary.CURRENTALPHABET = Dictionary.ENGALPHABET;
+                } else {
+                    GammaEncryptor.power = Dictionary.UKRALPHABET.size();
+                    Dictionary.CURRENTALPHABET = Dictionary.UKRALPHABET;
+                }
+                ArrayList<Character> keys = controller.verifyKeyValue(textArea.getText(), motto.getText());
                 String codedText = controller.onCode(textArea.getText(), keys);
                 textArea.setText(codedText);
             }
@@ -63,7 +64,7 @@ public class MyForm extends JDialog {
 
         decode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Integer> keys = controller.verifyKeyValue(textArea.getText(), linearFunc.getText(), unlinearFunc.getText(), motto.getText());
+                ArrayList<Character> keys = controller.verifyKeyValue(textArea.getText(), motto.getText());
                 String decodedText = controller.onDecode(textArea.getText(), keys);
                 textArea.setText(decodedText);
             }
@@ -89,84 +90,8 @@ public class MyForm extends JDialog {
             }
         });
 
-        keyTypeSelector.addActionListener (new ActionListener () {
-            public void actionPerformed(ActionEvent e) {
-                setKeySelector();
-            }
-        });
-        linearFunc.setEditable(false);
-        unlinearFunc.setEditable(false);
-        motto.setEditable(false);
-        linearFuncTune();
-        unlinearFuncTune();
+        motto.setEditable(true);
         languageSelectorTune();
-        keyTypeSelectorTune();
-    }
-
-    private void setKeySelector() {
-        String selectorValue = (String) keyTypeSelector.getSelectedItem();
-        switch (selectorValue)
-        {
-            case "Linear":
-            {
-                linearFunc.setEditable(true);
-                unlinearFunc.setText("");
-                motto.setText("");
-                unlinearFunc.setEditable(false);
-                motto.setEditable(false);
-                break;
-            }
-            case "Unlinear":
-            {
-                unlinearFunc.setEditable(true);
-                linearFunc.setText("");
-                motto.setText("");
-                linearFunc.setEditable(false);
-                motto.setEditable(false);
-                break;
-            }
-            case "Motto":
-            {
-                motto.setEditable(true);
-                linearFunc.setText("");
-                unlinearFunc.setText("");
-                linearFunc.setEditable(false);
-                unlinearFunc.setEditable(false);
-                break;
-            }
-        }
-    }
-
-    private void keyTypeSelectorTune() {
-        DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
-        defaultComboBoxModel.addElement("Linear");
-        defaultComboBoxModel.addElement("Unlinear");
-        defaultComboBoxModel.addElement("Motto");
-        keyTypeSelector.setModel(defaultComboBoxModel);
-    }
-
-    private void linearFuncTune() {
-        try {
-            MaskFormatter linearFormatter = new MaskFormatter("#p+#");
-            linearFormatter.setPlaceholderCharacter('x');
-            DefaultFormatterFactory defaultFormatterFactory = new DefaultFormatterFactory(linearFormatter);
-            linearFunc.setFormatterFactory(defaultFormatterFactory);
-            linearFunc.setColumns(4);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void unlinearFuncTune() {
-        try {
-            MaskFormatter linearFormatter = new MaskFormatter("#p+#p+#");
-            linearFormatter.setPlaceholderCharacter('x');
-            DefaultFormatterFactory defaultFormatterFactory = new DefaultFormatterFactory(linearFormatter);
-            unlinearFunc.setFormatterFactory(defaultFormatterFactory);
-            unlinearFunc.setColumns(8);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     private void languageSelectorTune() {

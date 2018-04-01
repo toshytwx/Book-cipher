@@ -1,5 +1,5 @@
 import encrypt.IEncryptor;
-import encrypt.TritemiusEncryptor;
+import encrypt.GammaEncryptor;
 
 import javax.swing.*;
 import java.io.*;
@@ -12,11 +12,11 @@ public class Controller {
         this.encryptor = encryptor;
     }
 
-    public String onCode(String incomingText, ArrayList<Integer> keys) {
+    public String onCode(String incomingText, ArrayList<Character> keys) {
         return encryptor.onCode(incomingText, keys);
     }
 
-    public String onDecode(String incomingText, ArrayList<Integer> keys) {
+    public String onDecode(String incomingText, ArrayList<Character> keys) {
         return encryptor.onDecode(incomingText, keys);
     }
 
@@ -50,24 +50,10 @@ public class Controller {
         }
     }
 
-    public ArrayList<Integer> verifyKeyValue(String input, String linearFunc, String unlinearFunc, String motto)
+    public ArrayList<Character> verifyKeyValue(String input, String motto)
     {
-        TritemiusEncryptor tritemiusEncryptor = (TritemiusEncryptor) encryptor;
-        char A = linearFunc.charAt(0);
-        char B = linearFunc.charAt(3);
-        char C = unlinearFunc.charAt(6);
-        boolean isLinear = (A != 'x') && (B != 'x');
-        if (A == 'x' && B == 'x') {
-            A = unlinearFunc.charAt(0);
-            B = unlinearFunc.charAt(3);
-        }
-        boolean isUnlinear = (A != 'x') && (B != 'x') && (C != 'x');
-        if (isLinear) {
-            return tritemiusEncryptor.getKeyFromLinearFunc(input, A, B);
-        } else if (isUnlinear) {
-            return tritemiusEncryptor.getKeyFromUnlinearFunc(input, A, B, C);
-        } else {
-            return tritemiusEncryptor.getKeyFromMotto(input, motto);
-        }
+        GammaEncryptor gammaEncryptor = (GammaEncryptor) encryptor;
+        return gammaEncryptor.getKeyFromMotto(input, motto);
+
     }
 }

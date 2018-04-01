@@ -1,8 +1,11 @@
-import encrypt.TritemiusEncryptor;
+import encrypt.Dictionary;
+import encrypt.GammaEncryptor;
+
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        TritemiusEncryptor encryptor = new TritemiusEncryptor();
+        GammaEncryptor encryptor = new GammaEncryptor();
         Controller controller = new Controller(encryptor);
         MyForm form = new MyForm(controller);
         form.pack();
