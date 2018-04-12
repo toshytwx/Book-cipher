@@ -1,9 +1,5 @@
-import encrypt.Dictionary;
-import encrypt.GammaEncryptor;
-
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 public class MyForm extends JDialog {
     private JPanel contentPane;
@@ -14,9 +10,10 @@ public class MyForm extends JDialog {
     private JButton decode;
     private JButton aboutButton;
     private JButton exitButton;
-    private JComboBox languageSelector;
-    private JTextField motto;
+    private JTextArea keyPoem;
+    private JButton openPoemFile;
     private JFileChooser jFileChooser;
+    private JFileChooser poemJFileChooser;
 
     public MyForm(Controller controller) {
         setContentPane(contentPane);
@@ -49,14 +46,7 @@ public class MyForm extends JDialog {
 
         code.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (((String) languageSelector.getSelectedItem()).equals("eng")) {
-                    GammaEncryptor.power = Dictionary.ENGALPHABET.size();
-                    Dictionary.CURRENTALPHABET = Dictionary.ENGALPHABET;
-                } else {
-                    GammaEncryptor.power = Dictionary.UKRALPHABET.size();
-                    Dictionary.CURRENTALPHABET = Dictionary.UKRALPHABET;
-                }
-                ArrayList<Character> keys = controller.verifyKeyValue(textArea.getText(), motto.getText());
+                char[][] keys = controller.verifyKeyValue(keyPoem.getText(), poemJFileChooser.getSelectedFile());
                 String codedText = controller.onCode(textArea.getText(), keys);
                 textArea.setText(codedText);
             }
@@ -64,8 +54,9 @@ public class MyForm extends JDialog {
 
         decode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                ArrayList<Character> keys = controller.verifyKeyValue(textArea.getText(), motto.getText());
-                String decodedText = controller.onDecode(textArea.getText(), keys);
+                char[][] keys = controller.verifyKeyValue(keyPoem.getText(), poemJFileChooser.getSelectedFile());
+                String textToDecode = textArea.getText().replaceAll("[,/ ]", "");
+                String decodedText = controller.onDecode(textToDecode, keys);
                 textArea.setText(decodedText);
             }
         });
@@ -90,15 +81,14 @@ public class MyForm extends JDialog {
             }
         });
 
-        motto.setEditable(true);
-        languageSelectorTune();
-    }
-
-    private void languageSelectorTune() {
-        DefaultComboBoxModel defaultComboBoxModel = new DefaultComboBoxModel();
-        defaultComboBoxModel.addElement("eng");
-        defaultComboBoxModel.addElement("ukr");
-        languageSelector.setModel(defaultComboBoxModel);
+        openPoemFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                poemJFileChooser = new JFileChooser();
+                String output = controller.onOpenFile(poemJFileChooser);
+                keyPoem.setText(output);
+            }
+        });
     }
 
     private void onAbout() {
