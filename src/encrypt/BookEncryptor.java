@@ -2,6 +2,7 @@ package encrypt;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class BookEncryptor implements IEncryptor {
     @Override
@@ -12,6 +13,7 @@ public class BookEncryptor implements IEncryptor {
         int letter = 0;
         String numRow = "";
         String numCol = "";
+        Random random = new Random();
         char[] chars = incomingText.toLowerCase().toCharArray();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
@@ -35,6 +37,9 @@ public class BookEncryptor implements IEncryptor {
                     } else {
                         i = 0;
                         j = 0;
+                    }
+                    if (letter != chars.length - 1 && chars[letter] == chars[letter + 1] || chars[letter] == chars[letter - 1]) {
+                        i = rows == 0 ? random.nextInt(rows + 1) : random.nextInt(rows);
                     }
                 }
             }
