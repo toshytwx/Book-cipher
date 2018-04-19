@@ -28,13 +28,14 @@ public class BookEncryptor implements IEncryptor {
                     }
                     sb.append(numRow).append("/").append(numCol).append(", ");
                     letter++;
-                }
-                if (letter >= chars.length) {
-                    return sb.toString();
-                } else if (letter < chars.length && j == columns - 1 && i == rows - 1) {
-                    i = 0;
-                    j = 0;
-                    letter++;
+                    if (letter >= chars.length) {
+                        return sb.toString();
+                    } else if (letter < chars.length && j == columns - 1 && i == rows - 1) {
+                        letter++;
+                    } else {
+                        i = 0;
+                        j = 0;
+                    }
                 }
             }
         }
